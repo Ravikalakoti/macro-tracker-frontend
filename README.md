@@ -1,16 +1,20 @@
-# React + Vite
+## About the Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Macro Tracker Frontend** is a lightweight and responsive React application built with Vite.  
+It serves as the user interface for tracking daily macronutrients (protein, carbs, fats, and calories) in meals, and works alongside a FastAPI backend that manages data storage and retrieval.
 
-Currently, two official plugins are available:
+### Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **User-friendly Interface:** Quickly view and log meals, nutrition stats, and progress.  
+- **Fast and Modern:** Built with React and Vite for lightning-fast development and hot module reloading.  
+- **Backend Integration:** Connects seamlessly with a FastAPI backend API for persistent data.  
+- **Deployed and Accessible:** Hosted as a Static Site on [Render](https://macro-tracker-frontend.onrender.com/) for easy access anywhere.  
+- **Environment Configurable:** Supports environment variables for API endpoints and keys, making it easy to switch between development and production.
 
-## React Compiler
+### Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend:** React, Vite, JavaScript, HTML, CSS  
+- **Backend:** FastAPI (separate deployment)  
+- **Deployment:** Render (Static Site hosting)
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+This project provides a foundation for building full-featured nutrition tracking apps or any other web apps that require a React frontend connected to a REST API backend.
