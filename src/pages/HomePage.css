@@ -1,0 +1,253 @@
+/* src/pages/HomePage.css */
+.home-container {
+  min-height: 100vh;
+  width: 100%;
+  background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1740&q=80');
+  background-size: cover;
+  background-position: center;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 3rem;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  z-index: 100;
+  align-items: center;
+}
+
+.nav-left h2 {
+  font-size: 1.5rem;
+}
+
+.nav-right {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-link {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+}
+
+.nav-link:hover {
+  background: #4f46e5;
+  color: white;
+}
+
+.nav-link.primary {
+  background: #4f46e5;
+}
+
+.nav-link.api-link {
+  background: #10b981;
+}
+
+/* Overlay / Hero */
+.overlay.hero {
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 6rem 2rem 4rem 2rem;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.3rem;
+  color: #ddd;
+  margin-bottom: 2rem;
+}
+
+/* Sections */
+.section {
+  background: rgba(0,0,0,0.6);
+  padding: 3rem 2rem;
+  margin: 2rem auto;
+  max-width: 900px;
+  border-radius: 1rem;
+  color: #fff;
+  text-align: center;
+}
+
+.section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.section p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+/* Buttons */
+.home-button {
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: rgba(255,255,255,0.2);
+  border: 2px solid #fff;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.home-button:hover {
+  background-color: #fff;
+  color: #4f46e5;
+  transform: scale(1.05);
+}
+
+.home-button.primary {
+  background-color: #4f46e5;
+  color: #fff;
+  border: 2px solid #4f46e5;
+}
+
+.home-button.secondary {
+  background-color: #10b981;
+  border: 2px solid #10b981;
+}
+
+.home-button.secondary:hover {
+  background-color: #059669;
+  transform: scale(1.05);
+}
+
+.home-button.api-link {
+  background-color: #f59e0b;
+  border: 2px solid #f59e0b;
+}
+
+.home-button.api-link:hover {
+  background-color: #d97706;
+  transform: scale(1.05);
+}
+
+/* Footer */
+.home-footer {
+  color: #fff;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 2rem;
+  padding-bottom: 1rem;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1s forwards;
+}
+
+.fade-in.delay-1 { animation-delay: 0.5s; }
+.fade-in.delay-2 { animation-delay: 1s; }
+.fade-in.delay-3 { animation-delay: 1.5s; }
+.fade-in.delay-4 { animation-delay: 2s; }
+.fade-in.delay-5 { animation-delay: 2.5s; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-right {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .navbar {
+    padding: 1rem 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+/* Disable API link when not logged in */
+.nav-link.disabled,
+.home-button.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+
+.modal-content {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  color: #fff;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.modal-close-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #4f46e5;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.modal-close-button:hover {
+  background: #fff;
+  color: #4f46e5;
+  transform: scale(1.05);
+}
+

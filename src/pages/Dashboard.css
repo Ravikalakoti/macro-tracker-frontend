@@ -1,50 +1,77 @@
-/* Dashboard.css */
-
-.dashboard-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f0f0f5;
-  font-family: Arial, sans-serif;
+/* General */
+body, html {
+  margin: 0; padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f8; color: #333;
 }
 
-.dashboard-card {
-  background-color: #fff;
-  padding: 40px 30px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 500px;
-  text-align: center;
+.dashboard-container { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* Navbar */
+.navbar {
+  display: flex; justify-content: space-between; align-items: center;
+  background-color: #4a90e2; padding: 1rem 2rem; color: #fff;
+  position: sticky; top: 0; z-index: 1000;
 }
 
-.dashboard-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #1e40af;
-  margin-bottom: 25px;
+.logout-btn {
+  background-color: #fff; color: #4a90e2; border: none; padding: 0.5rem 1rem;
+  font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s;
+}
+.logout-btn:hover { background-color: #e6f0fc; }
+
+.logo { font-size: 1.5rem; font-weight: bold; }
+
+/* Main Content */
+.dashboard-main { flex: 1; padding: 2rem; padding-top: 4.5rem; display: flex; flex-direction: column; gap: 2rem; }
+
+/* Top section */
+.dashboard-top { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; }
+.user-card, .stats-card, .summary-btn { background-color: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); flex: 1; min-width: 200px; }
+.summary-btn { cursor: pointer; background-color: #ff8c42; color: #fff; border: none; border-radius: 12px; padding: 1rem 1.5rem; font-weight: bold; }
+.summary-btn:hover { background-color: #ff9c57; }
+
+/* Forms */
+.form-section { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+.form-card { background-color: #fff; flex: 1; min-width: 250px; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.form-card form { display: flex; flex-direction: column; gap: 0.8rem; }
+input { padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid #ccc; outline: none; }
+input:focus { border-color: #4a90e2; }
+.btn.primary-btn { padding: 0.8rem 1rem; background-color: #4a90e2; color: #fff; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+.btn.primary-btn:hover { background-color: #357ab7; }
+
+/* Drag & Drop */
+.food-list, .meal-foods-dnd { background-color: #f7f8fa; border: 1px dashed #ccc; padding: 1rem; border-radius: 10px; min-height: 120px; margin-bottom: 1rem; }
+.food-item { background-color: #fff; padding: 0.6rem 1rem; border-radius: 8px; margin-bottom: 0.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; cursor: grab; }
+.food-item:active { cursor: grabbing; }
+.meal-food { background-color: #d9f0ff; }
+
+/* Meals List */
+.meals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.meal-card { background-color: #fff; padding: 1rem 1.2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s; }
+.meal-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.12); }
+.meal-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.delete-btn { background: transparent; border: none; cursor: pointer; font-size: 1.1rem; color: #ff4d4f; transition: transform 0.2s; }
+.delete-btn:hover { transform: scale(1.2); }
+.meal-foods { font-size: 0.95rem; color: #555; margin-bottom: 0.8rem; }
+.meal-macros { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; color: #333; flex-wrap: wrap; gap: 0.5rem; }
+
+/* Daily Summary */
+.summary-card { background-color: #fff; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); animation: fadeIn 0.3s ease; }
+.summary-card h3 { margin-bottom: 1rem; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-top, .form-section { flex-direction: column; }
 }
 
-.dashboard-info {
-  font-size: 16px;
-  color: #333;
-  margin: 10px 0;
-}
+@keyframes fadeIn { from {opacity: 0; transform: translateY(-10px);} to {opacity: 1; transform: translateY(0);} }
 
-.dashboard-button {
-  margin-top: 20px;
-  padding: 12px 20px;
-  border-radius: 8px;
-  border: none;
-  background-color: #1e40af;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.dashboard-button:hover {
-  background-color: #3749c4;
+.food-list, .meal-foods-dnd {
+  background-color: #f7f8fa;
+  border: 1px dashed #ccc;   /* shows visually it's a drop zone */
+  padding: 1rem;
+  border-radius: 10px;
+  min-height: 120px;
+  margin-bottom: 1rem;
 }

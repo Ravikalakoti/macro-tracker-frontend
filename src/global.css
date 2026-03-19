@@ -1,0 +1,77 @@
+/* ===== Global Box-sizing and font ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* ===== Make images and media responsive ===== */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ===== Global buttons ===== */
+button, .home-button, .nav-link {
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+/* ===== Utility flex/grid ===== */
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Responsive Media Queries ===== */
+@media (max-width: 1024px) {
+  body {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  .flex-center {
+    flex-direction: column;
+  }
+
+  .home-button, button, .nav-link {
+    width: 90%;
+    margin: 0.5rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 13px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+  }
+}
