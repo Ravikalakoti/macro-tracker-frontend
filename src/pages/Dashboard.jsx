@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { FaTrash } from "react-icons/fa";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -15,7 +17,6 @@ export default function Dashboard() {
   const [mealForm, setMealForm] = useState({ name: "" });
   const [dailySummary, setDailySummary] = useState(null);
 
-  // Fetch user, foods, and meals
   useEffect(() => {
     API.get("/users/me")
       .then(res => setUser(res.data))
@@ -56,10 +57,7 @@ export default function Dashboard() {
   const handleAddMeal = async (e) => {
     e.preventDefault();
     try {
-      await API.post("/meals/", { 
-        name: mealForm.name,
-        food_ids: []  // ⚡ Must include this, even if empty
-      });
+      await API.post("/meals/", { name: mealForm.name, food_ids: [] });
       toast.success("Meal created!");
       setMealForm({ name: "" });
       fetchMeals();
@@ -68,11 +66,13 @@ export default function Dashboard() {
     }
   };
 
+  // Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
 
+  // Daily Summary
   const fetchDailySummary = async () => {
     try {
       const today = new Date().toISOString().split("T")[0];
@@ -83,28 +83,23 @@ export default function Dashboard() {
     }
   };
 
-  // Drag & Drop handler
+  // Drag & Drop
   const handleDragEnd = async (result) => {
-    const { source, destination, draggableId } = result;
+    const { destination, draggableId } = result;
     if (!destination) return;
 
     const foodId = parseInt(draggableId);
 
-    // Dropping into a meal
     if (destination.droppableId.startsWith("meal-")) {
       const mealId = parseInt(destination.droppableId.split("-")[1]);
       const meal = meals.find(m => m.id === mealId);
       if (!meal) return;
 
-      // Updated food_ids for the meal
       const updatedFoodIds = [...meal.foods.map(f => f.id)];
       if (!updatedFoodIds.includes(foodId)) updatedFoodIds.push(foodId);
 
       try {
-        await API.put(`/meals/${mealId}`, {
-          name: meal.name,
-          food_ids: updatedFoodIds
-        });
+        await API.put(`/meals/${mealId}`, { name: meal.name, food_ids: updatedFoodIds });
         toast.success("Food added to meal!");
         fetchMeals();
       } catch (err) {
@@ -116,25 +111,46 @@ export default function Dashboard() {
   // Delete meal
   const handleDeleteMeal = async (mealId) => {
     if (!window.confirm("Are you sure you want to delete this meal?")) return;
+    try { await API.delete(`/meals/${mealId}`); toast.success("Meal deleted!"); fetchMeals(); }
+    catch (err) { toast.error("Error deleting meal"); }
+  };
+
+  // Delete food from DB
+  const handleDeleteFood = async (foodId) => {
+    if (!window.confirm("Are you sure you want to delete this food?")) return;
     try {
-      await API.delete(`/meals/${mealId}`);
-      toast.success("Meal deleted!");
+      await API.delete(`/foods/${foodId}`);
+      toast.success("Food deleted!");
+      fetchFoods();
+      fetchMeals(); // update meals in case this food existed
+    } catch (err) {
+      toast.error("Error deleting food");
+    }
+  };
+
+  // Delete food from a meal only
+  const handleDeleteFoodFromMeal = async (mealId, foodId) => {
+    if (!window.confirm("Remove this food from meal?")) return;
+    try {
+      const meal = meals.find(m => m.id === mealId);
+      const updatedFoodIds = meal.foods.filter(f => f.id !== foodId).map(f => f.id);
+      await API.put(`/meals/${mealId}`, { name: meal.name, food_ids: updatedFoodIds });
+      toast.success("Food removed from meal!");
       fetchMeals();
     } catch (err) {
-      toast.error("Error deleting meal");
+      toast.error("Error removing food from meal");
     }
   };
 
   return (
     <div className="dashboard-container">
-      {/* Navbar */}
       <header className="navbar">
         <h2 className="logo">🍽️ Macro Tracker</h2>
         <button className="btn logout-btn" onClick={handleLogout}>Logout</button>
       </header>
 
       <main className="dashboard-main">
-        {/* Top Section */}
+        {/* Top */}
         <section className="dashboard-top">
           <div className="user-card">
             <h2>Welcome, {user?.username || "Loading..."}</h2>
@@ -151,16 +167,37 @@ export default function Dashboard() {
         {dailySummary && (
           <section className="summary-card">
             <h3>Daily Summary ({dailySummary.date})</h3>
-            <p>Calories: <strong>{dailySummary.total_calories}</strong> kcal</p>
-            <p>Fat: <strong>{dailySummary.total_fat}</strong> g</p>
-            <p>Protein: <strong>{dailySummary.total_protein}</strong> g</p>
-            <p>Carbs: <strong>{dailySummary.total_carbs}</strong> g</p>
+            <div className="daily-summary-table">
+              <table>
+                <thead>
+                  <tr><th>Macro</th><th>Total</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Calories</td><td>{dailySummary.total_calories}</td></tr>
+                  <tr><td>Protein</td><td>{dailySummary.total_protein}g</td></tr>
+                  <tr><td>Fat</td><td>{dailySummary.total_fat}g</td></tr>
+                  <tr><td>Carbs</td><td>{dailySummary.total_carbs}g</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={[
+                { name: "Calories", value: dailySummary.total_calories },
+                { name: "Protein", value: dailySummary.total_protein },
+                { name: "Fat", value: dailySummary.total_fat },
+                { name: "Carbs", value: dailySummary.total_carbs }
+              ]}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
           </section>
         )}
 
         {/* Forms */}
         <section className="form-section">
-          {/* Add Food */}
           <div className="form-card">
             <h3>Add Food</h3>
             <form onSubmit={handleAddFood}>
@@ -172,7 +209,6 @@ export default function Dashboard() {
             </form>
           </div>
 
-          {/* Create Meal */}
           <div className="form-card">
             <h3>Create Meal</h3>
             <form onSubmit={handleAddMeal}>
@@ -192,13 +228,11 @@ export default function Dashboard() {
                   {foods.map((f, index) => (
                     <Draggable key={f.id} draggableId={f.id.toString()} index={index}>
                       {(provided) => (
-                        <div
-                          className="food-item"
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
+                        <div className="food-item" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                           {f.name} ({f.protein}P / {f.fat}F / {f.carbs}C)
+                          <button className="delete-btn" onClick={() => handleDeleteFood(f.id)}>
+                            <FaTrash />
+                          </button>
                         </div>
                       )}
                     </Draggable>
@@ -210,53 +244,55 @@ export default function Dashboard() {
 
             <h3>My Meals</h3>
             <div className="meals-grid">
-              {meals.map(m => {
-                const totalFat = m.foods.reduce((sum, f) => sum + f.fat, 0);
-                const totalProtein = m.foods.reduce((sum, f) => sum + f.protein, 0);
-                const totalCarbs = m.foods.reduce((sum, f) => sum + f.carbs, 0);
-                const totalCalories = totalFat*9 + (totalProtein + totalCarbs)*4;
-
-                return (
-                  <Droppable droppableId={`meal-${m.id}`} key={m.id}>
-                    {(provided, snapshot) => (
-                      <div
-                        className={`meal-card ${snapshot.isDraggingOver ? 'drag-over' : ''}`}
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                      >
-                        <div className="meal-card-header">
-                          <h4>{m.name}</h4>
-                          <button className="delete-btn" onClick={() => handleDeleteMeal(m.id)}>🗑️</button>
-                        </div>
-
-                        {/* Foods in Meal with individual macros */}
-                        <div className="meal-foods-list">
-                          {m.foods.map((f, index) => (
-                            <div key={f.id} className="meal-food-item">
-                              <span>{f.name}</span>
-                              <span>🔥 {f.protein*4 + f.carbs*4 + f.fat*9} kcal</span>
-                              <span>💪 Protein: {f.protein}g</span>
-                              <span>🧈 Fat: {f.fat}g</span>
-                              <span>🍞 Carbs: {f.carbs}g</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Meal Totals */}
-                        <div className="meal-macros">
-                          <strong>Meal Totals:</strong>
-                          <span>🔥 {totalCalories} kcal</span>
-                          <span>💪 {totalProtein}g Protein</span>
-                          <span>🧈 {totalFat}g Fat</span>
-                          <span>🍞 {totalCarbs}g Carbs</span>
-                        </div>
-
-                        {provided.placeholder}
+              {meals.map(m => (
+                <Droppable droppableId={`meal-${m.id}`} key={m.id}>
+                  {(provided, snapshot) => (
+                    <div className={`meal-card ${snapshot.isDraggingOver ? 'drag-over' : ''}`} ref={provided.innerRef} {...provided.droppableProps}>
+                      <div className="meal-card-header">
+                        <h4>{m.name}</h4>
+                        <button className="delete-btn" onClick={() => handleDeleteMeal(m.id)}>🗑️</button>
                       </div>
-                    )}
-                  </Droppable>
-                )
-              })}
+
+                      <table className="meal-table">
+                        <thead>
+                          <tr>
+                            <th>Food</th><th>Calories</th><th>Protein</th><th>Fat</th><th>Carbs</th><th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {m.foods.map(f => {
+                            const calories = f.protein*4 + f.carbs*4 + f.fat*9;
+                            return (
+                              <tr key={f.id}>
+                                <td>{f.name}</td>
+                                <td>{calories}</td>
+                                <td>{f.protein}</td>
+                                <td>{f.fat}</td>
+                                <td>{f.carbs}</td>
+                                <td>
+                                  <button className="delete-btn" onClick={() => handleDeleteFoodFromMeal(m.id, f.id)}>
+                                    <FaTrash />
+                                  </button>
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+
+                      <div className="meal-macros">
+                        <strong>Totals:</strong>
+                        <span>Calories: {m.foods.reduce((sum,f)=>sum+(f.protein*4+f.carbs*4+f.fat*9),0)}</span>
+                        <span>Protein: {m.foods.reduce((sum,f)=>sum+f.protein,0)}g</span>
+                        <span>Fat: {m.foods.reduce((sum,f)=>sum+f.fat,0)}g</span>
+                        <span>Carbs: {m.foods.reduce((sum,f)=>sum+f.carbs,0)}g</span>
+                      </div>
+
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              ))}
             </div>
           </section>
         </DragDropContext>
