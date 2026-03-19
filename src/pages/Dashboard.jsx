@@ -76,7 +76,7 @@ export default function Dashboard() {
   const fetchDailySummary = async () => {
     try {
       const today = new Date().toISOString().split("T")[0];
-      const res = await API.get(`/summary/${today}`);
+      const res = await API.get(`/meals/summary/${today}`);
       setDailySummary(res.data);
     } catch (err) {
       toast.error("Error fetching daily summary");
